@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/add"
+        android:icon="@drawable/addredd3"
+        app:showAsAction="always"
+        android:title="增加" />
+
+    <item android:id="@+id/done"
+        android:title="完成"
+        android:icon="@drawable/address2"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/write"
+        android:title="更改"
+        app:showAsAction="never"
+        android:icon="@drawable/address1"/>
+
+</menu>
