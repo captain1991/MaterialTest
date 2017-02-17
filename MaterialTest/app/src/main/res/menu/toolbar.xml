@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/add"
-        android:icon="@drawable/addredd3"
+        android:icon="@drawable/add"
         app:showAsAction="always"
         android:title="增加" />
 
     <item android:id="@+id/done"
         android:title="完成"
-        android:icon="@drawable/address2"
+        android:icon="@drawable/done"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/write"
         android:title="更改"
         app:showAsAction="never"
-        android:icon="@drawable/address1"/>
+        android:icon="@drawable/change"/>
 
 </menu>
