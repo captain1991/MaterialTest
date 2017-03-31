@@ -8,7 +8,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,9 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alibaba.android.vlayout.DelegateAdapter;
+import com.alibaba.android.vlayout.VirtualLayoutManager;
+import com.alibaba.android.vlayout.layout.GridLayoutHelper;
+import com.alibaba.android.vlayout.layout.LinearLayoutHelper;
+import com.alibaba.android.vlayout.layout.StaggeredGridLayoutHelper;
 import com.xiaodong.materialtest.bean.Fruit;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -42,8 +47,46 @@ public class MyActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         initFruits();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
-        recyclerView.setAdapter(new FruitRecyclerAdapter(this,fruits));
+//        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+//        recyclerView.setAdapter(new FruitRecyclerAdapter(this,fruits));
+        //天猫框架实现
+        VirtualLayoutManager layoutManager = new VirtualLayoutManager(this);
+
+        recyclerView.setLayoutManager(layoutManager);
+        RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+        recyclerView.setRecycledViewPool(viewPool);
+        viewPool.setMaxRecycledViews(0,10);
+        //第一种用法
+        DelegateAdapter adapter = new DelegateAdapter(layoutManager,false);//第二个参数相同的item时填true，item不同时最好用false（如果用true会有明显卡顿）
+        recyclerView.setAdapter(adapter);
+        List<DelegateAdapter.Adapter> adapterList = new LinkedList<>();
+        adapterList.add(new TitleAdapter(this,"表格"));
+        adapterList.add(new CustomAdapter(this,fruits,new GridLayoutHelper(2)));
+        adapterList.add(new TitleAdapter(this,"线性"));
+        adapterList.add(new CustomAdapter(this,fruits,new LinearLayoutHelper(5)));
+        adapterList.add(new TitleAdapter(this,"瀑布"));
+        adapterList.add(new CustomAdapter(this,fruits,new StaggeredGridLayoutHelper(2)));
+        adapter.setAdapters(adapterList);
+        //两种方式添加adapter
+//        adapter.addAdapter(new TitleAdapter(this,"表格"));
+//        adapter.addAdapter(new CustomAdapter(this,fruits,new GridLayoutHelper(2)));
+//        adapter.addAdapter(new TitleAdapter(this,"线性"));
+//        adapter.addAdapter(new CustomAdapter(this,fruits,new LinearLayoutHelper(5)));
+//        adapter.addAdapter(new TitleAdapter(this,"瀑布流"));
+//        adapter.addAdapter(new CustomAdapter(this,fruits,new StaggeredGridLayoutHelper(2)));
+
+        //第二种用法(复杂业务需求时)
+//        MyAdapter myAdapter = new MyAdapter(this,fruits,layoutManager);
+//        List<LayoutHelper> layoutHelpers = new LinkedList<>();
+//        GridLayoutHelper gridLayoutHelper = new GridLayoutHelper(2);
+//        gridLayoutHelper.setItemCount(8);
+//        layoutHelpers.add(gridLayoutHelper);
+//        GridLayoutHelper gridLayoutHelper1 = new GridLayoutHelper(4);
+//        gridLayoutHelper1.setItemCount(4);
+//        layoutHelpers.add(gridLayoutHelper1);
+//        myAdapter.setLayoutHelpers(layoutHelpers);
+//        recyclerView.setAdapter(myAdapter);
+
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         ActionBar actionBar = getSupportActionBar();
@@ -101,10 +144,12 @@ public class MyActivity extends AppCompatActivity {
 
     private void initFruits(){
         fruits.clear();
-       for(int i=0;i<50;i++){
+       for(int i=0;i<16;i++){
            Random random = new Random();
            int position = random.nextInt(fruitss.length);
-           fruits.add(fruitss[position]);
+           Fruit fruit = fruitss[position];
+           fruit.setName(fruit.getComName());
+           fruits.add(fruit);
        }
     }
 }
